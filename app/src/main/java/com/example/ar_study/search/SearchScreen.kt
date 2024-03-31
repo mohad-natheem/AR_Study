@@ -41,7 +41,9 @@ import com.example.ar_study.home.CategoryItems
 
 @Composable
 fun SearchScreen(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    navigateToCategory:(String)->Unit,
+    navigateToTopic:(String)->Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val viewModel = hiltViewModel<MainViewModel>()
@@ -95,9 +97,8 @@ fun SearchScreen(
                             item = item, modifier = Modifier
                                 .height(200.dp)
                                 .width(300.dp),
-                            onClick = {
-                                navHostController.navigate("category_screen/${item.categoryName}")
-
+                            onClick ={
+                                navigateToCategory(item.categoryName)
                             }
                         )
 
@@ -124,7 +125,7 @@ fun SearchScreen(
                                 .height(200.dp)
                                 .width(300.dp),
                             navigateToTopic = {
-                                navHostController.navigate("detail_screen/$it")
+                                navigateToTopic((it))
                             }
                         )
 
@@ -142,6 +143,7 @@ fun SearchScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SearchScreenPreview() {
-    SearchScreen(navHostController = rememberNavController())
+    SearchScreen(navHostController = rememberNavController(), navigateToCategory = {}, navigateToTopic = {}
+    )
 
 }

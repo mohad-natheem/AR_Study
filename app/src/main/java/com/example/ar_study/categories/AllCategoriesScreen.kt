@@ -38,12 +38,12 @@ import com.example.ar_study.common.TopicCard2
 
 @Composable
 fun AllCategoriesScreen(
-    onBackClick:()->Unit,
-    navigateToTopic:(String)->Unit
+    onBackClick: () -> Unit,
+    navigateToTopic: (String) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         val viewModel = hiltViewModel<MainViewModel>()
         val allCategories = viewModel.Categories.value
         Image(
@@ -58,35 +58,23 @@ fun AllCategoriesScreen(
                 .padding(start = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Row(
+
+            Image(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 20.dp, end = 20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clickable {
-                            onBackClick()
-                        },
-                    imageVector = Icons.Rounded.KeyboardArrowLeft,
-                    contentDescription = "back",
-                )
-                Image(
-                    modifier = Modifier.size(60.dp),
-                    painter = painterResource(id = R.drawable.applogo),
-                    contentDescription = "Profile"
-                )
-            }
+                    .size(60.dp)
+                    .align(Alignment.End)
+                    .padding(end = 20.dp),
+                painter = painterResource(id = R.drawable.applogo),
+                contentDescription = "Profile"
+            )
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "All Categories",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(16.dp))
-            allCategories.forEach {category->
+            allCategories.forEach { category ->
                 Text(
                     text = category.categoryName,
                     fontSize = 24.sp,
@@ -108,7 +96,6 @@ fun AllCategoriesScreen(
 
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-
 
 
             }

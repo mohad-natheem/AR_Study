@@ -44,7 +44,6 @@ fun OnBoardingScreen(
                     1 -> listOf("Back", "Next")
                     2 -> listOf("Back", "Get Started")
                     else -> listOf("", "")
-
                 }
             }
         }
@@ -90,12 +89,8 @@ fun OnBoardingScreen(
                             page = pagerState.currentPage + 1
                         )
                     }
-
                 }
-
             }
-
-
         }
         Spacer(modifier = Modifier.weight(0.5f))
     }

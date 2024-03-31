@@ -2,26 +2,17 @@ package com.example.ar_study.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -34,7 +25,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.ar_study.MainViewModel
 import com.example.ar_study.R
-import com.example.ar_study.common.CategoryCard
 import com.example.ar_study.common.CategoryItem
 import com.example.ar_study.common.SearchBar
 import com.example.ar_study.ui.theme.AR_StudyTheme
@@ -43,6 +33,7 @@ import com.example.ar_study.ui.theme.AR_StudyTheme
 fun HomeScreen(
     navHostController: NavHostController,
     bottomNavController: NavHostController,
+    navigateToCategory:(String)->Unit
 ) {
     val viewModel = hiltViewModel<MainViewModel>()
     val allCategories = viewModel.Categories.value
@@ -62,7 +53,10 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Image(
-                modifier = Modifier.size(60.dp).align(Alignment.End).padding(end = 20.dp),
+                modifier = Modifier
+                    .size(60.dp)
+                    .align(Alignment.End)
+                    .padding(end = 20.dp),
                 painter = painterResource(id = R.drawable.applogo),
                 contentDescription = "Logo"
             )
@@ -70,7 +64,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier.padding(start = 20.dp),
-                text = "Welcome back",
+                text = "Welcome to",
                 color = colorResource(id = R.color.text_title),
                 fontSize = 28.sp
             )
@@ -80,7 +74,7 @@ fun HomeScreen(
                     .clickable {
                         navHostController.navigate("details_screen")
                     },
-                text = "John",
+                text = "AR Study",
                 color = colorResource(id = R.color.app_primary),
                 fontSize = 36.sp,
                 fontWeight = FontWeight.ExtraBold
@@ -109,50 +103,59 @@ fun HomeScreen(
 
             )
             Spacer(modifier = Modifier.height(30.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Categories",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    modifier = Modifier.clickable {
-                        navHostController.navigate("allCategories_screen")
-                    },
-                    text = "View all",
-                    fontSize = 16.sp,
-                    color = Color.Blue
-                )
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(1),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(allCategories) { item ->
-                    CategoryCard(
-                        item = item,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        onClick = {
-                            navHostController.navigate("category_screen/${item.categoryName}")
-                        }
-                    )
-
-                }
-
-            }
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 20.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Text(
+//                    text = "Categories",
+//                    fontSize = 24.sp,
+//                    fontWeight = FontWeight.Bold
+//                )
+//                Text(
+//                    modifier = Modifier.clickable {
+//                        navHostController.navigate("allCategories_screen")
+//                    },
+//                    text = "View all",
+//                    fontSize = 16.sp,
+//                    color = Color.Blue
+//                )
+//            }
+//            Spacer(modifier = Modifier.height(12.dp))
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(1),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(start = 20.dp, end = 20.dp),
+//                horizontalArrangement = Arrangement.spacedBy(16.dp),
+//                verticalArrangement = Arrangement.spacedBy(16.dp)
+//            ) {
+//                items(allCategories) { item ->
+//                    CategoryCard(
+//                        item = item,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(200.dp),
+//                        onClick = {
+//                            navHostController.navigate("category_screen/${item.categoryName}")
+//                        }
+//                    )
+//
+//                }
+//
+//            }
+            Text(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                text = "Recommended",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            AutomaticSwipeSection(catgories = allCategories, onClick = {
+                navigateToCategory(it)
+            })
 
 
         }
@@ -168,7 +171,9 @@ private fun HomeScreenPreview() {
         HomeScreen(
             navHostController = rememberNavController(),
             bottomNavController = rememberNavController()
-        )
+        ){
+
+        }
     }
 
 }

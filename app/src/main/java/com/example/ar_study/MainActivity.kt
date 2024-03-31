@@ -1,7 +1,10 @@
 package com.example.ar_study
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -39,25 +43,47 @@ class MainActivity : ComponentActivity() {
             setKeepOnScreenCondition {
                 !viewModel.isReady.value
             }
+            setOnExitAnimationListener{screen->
+                val zoomX = ObjectAnimator.ofFloat(
+                    screen.iconView,
+                    View.SCALE_X,
+                    0.4f,
+                    0.0f
+
+                )
+                zoomX.interpolator = OvershootInterpolator()
+                zoomX.duration = 500L
+                zoomX.doOnEnd { screen.remove() }
+
+                val zoomY = ObjectAnimator.ofFloat(
+                    screen.iconView,
+                    View.SCALE_Y,
+                    0.4f,
+                    0.0f
+                )
+                zoomY.interpolator = OvershootInterpolator()
+                zoomY.duration = 500L
+                zoomY.doOnEnd { screen.remove() }
+                zoomX.start()
+                zoomY.start()
+            }
         }
         setContent {
             AR_StudyTheme {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-
                     ) {
                     val navController = rememberNavController()
+                    val viewModel = hiltViewModel<MainViewModel>()
                     Image(
                         modifier = Modifier.fillMaxSize(),
                         painter = painterResource(id = R.drawable.background5),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
-
                     NavHost(navController = navController, startDestination = "onboarding_screen") {
                         composable(route = "onboarding_screen") {
                             OnBoardingScreen(navController)
-
                         }
                         composable(route = "home_screen") {
                             BottomNavigator(navController)
@@ -70,6 +96,7 @@ class MainActivity : ComponentActivity() {
                                 },
                             )
                             ) {
+                            viewModel.reloadList()
                             val topicName = remember{
                                 it.arguments?.getString("topic")
                             } ?:""
@@ -88,9 +115,9 @@ class MainActivity : ComponentActivity() {
                                 navArgument("category") {
                                     type = NavType.StringType
                                 },
-
                                 )
                         ) {
+                            viewModel.reloadList()
                             val categoryName = remember {
                                 it.arguments?.getString("category")
                             }?:""
@@ -102,25 +129,16 @@ class MainActivity : ComponentActivity() {
                             CategoryScreen(category = category, navigateToTopic = {
                                 navController.navigate(
                                     "detail_screen/$it"
-                                )
+                                ){
+                                    launchSingleTop = true
+                                }
                             }, onBackClick = {
                                 navController.popBackStack()
                             }
                             )
                         }
-                        composable(route = "allCategories_screen") {
-                            AllCategoriesScreen(
-                                navigateToTopic = {
-                                    navController.navigate("detail_screen/$it")
-                                },
-                                onBackClick = {
-                                    navController.popBackStack()
-                                }
-                            )
 
-                        }
                     }
-
                 }
             }
         }

@@ -13,8 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.example.ar_study.Dimens.IndicatorSize
+import com.example.ar_study.R
 import com.example.ar_study.ui.theme.BlueGray
 
 @Composable
@@ -22,7 +24,7 @@ fun PagerIndicator(
     modifier :Modifier = Modifier,
     pageSize : Int,
     selectedPage : Int,
-    selectedColor: Color = MaterialTheme.colorScheme.primary,
+    selectedColor: Color = colorResource(id = R.color.app_primary),
     unselectedColor : Color = BlueGray
 ) {
 
@@ -32,7 +34,7 @@ fun PagerIndicator(
                 .height(IndicatorSize)
                 .width(IndicatorSize)
                 .clip(CircleShape)
-                .background(if(page == selectedPage) selectedColor else unselectedColor)
+                .background(if (page == selectedPage) selectedColor else unselectedColor)
             )
         }
 

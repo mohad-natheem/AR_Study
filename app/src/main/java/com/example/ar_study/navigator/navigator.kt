@@ -8,10 +8,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.ViewList
+import androidx.compose.material.icons.rounded.FormatListBulleted
 import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.ViewList
 import androidx.compose.material.icons.twotone.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalAbsoluteTonalElevation
@@ -41,6 +47,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.ar_study.MainViewModel
 import com.example.ar_study.R
+import com.example.ar_study.categories.AllCategoriesScreen
 import com.example.ar_study.home.HomeScreen
 import com.example.ar_study.search.SearchScreen
 
@@ -59,7 +66,8 @@ fun BottomNavigator(
             NavigationBar(
                 containerColor = colorResource(id = R.color.input_background),
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(horizontal = 30.dp)
+                    .padding(bottom = 16.dp)
                     .height(70.dp)
                     .clip(RoundedCornerShape(30.dp))
 
@@ -76,6 +84,7 @@ fun BottomNavigator(
                     val isSelected = item.route == bottomBackStackState?.destination?.route
 
                     NavigationBarItem(
+//                        modifier = Modifier.padding(vertical = 12.dp),
                         selected = isSelected,
                         onClick = {
                             bottomNavController.navigate(item.route) {
@@ -107,30 +116,54 @@ fun BottomNavigator(
             }
         }
     ) { padding ->
-        NavHost(modifier = Modifier.padding(),navController = bottomNavController, startDestination = "home") {
-            composable(route = "home") {
-                val viewModel = hiltViewModel<MainViewModel>()
-                viewModel.reloadList()
-
-                HomeScreen(navHostController=navHostController,bottomNavController =bottomNavController)
-
-            }
-            composable(route = "search") {
-                val viewModel = hiltViewModel<MainViewModel>()
-                viewModel.reloadList()
-                SearchScreen(navHostController)
-
-            }
-            composable(route = "profile") {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val viewModel = hiltViewModel<MainViewModel>()
+        Box {
+            val viewModel = hiltViewModel<MainViewModel>()
+            NavHost(
+                modifier = Modifier.padding(),
+                navController = bottomNavController,
+                startDestination = "home"
+            ) {
+                composable(route = "home") {
                     viewModel.reloadList()
-                    Text("Profile Screen", fontWeight = FontWeight.Bold)
+                    HomeScreen(
+                        navHostController = navHostController,
+                        bottomNavController = bottomNavController
+                    ) {
+                        navHostController.navigate("category_screen/$it") {
+                            launchSingleTop = true
+                        }
+                    }
                 }
+                composable(route = "search") {
+                    viewModel.reloadList()
+                    SearchScreen(
+                        navHostController,
+                        navigateToTopic = {
+                            navHostController.navigate("detail_screen/$it") {
+                                launchSingleTop = true
+                            }
+                        },
+                        navigateToCategory = {
+                            navHostController.navigate("category_screen/$it") {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+                composable(route = "categories") {
+                    viewModel.reloadList()
+                    AllCategoriesScreen(
+                        navigateToTopic = {
+                            navHostController.navigate("detail_screen/$it") {
+                                launchSingleTop = true
+                            }
+                        },
+                        onBackClick = {
+                            navHostController.popBackStack()
+                        }
+                    )
 
+                }
             }
         }
 
@@ -155,13 +188,13 @@ val items = listOf(
     BottomNavigationItem(
         route = "search",
         title = "Search",
-        selectedIcon = Icons.TwoTone.Search,
+        selectedIcon = Icons.Rounded.Search,
         unselectedIcon = Icons.Outlined.Search
     ),
     BottomNavigationItem(
-        route = "profile",
-        title = "Profile",
-        selectedIcon = Icons.Rounded.Person,
-        unselectedIcon = Icons.Outlined.Person
+        route = "categories",
+        title = "Categories",
+        selectedIcon = Icons.Rounded.ViewList,
+        unselectedIcon = Icons.Outlined.ViewList
     )
 )
